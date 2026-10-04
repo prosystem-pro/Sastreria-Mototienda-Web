@@ -1,0 +1,274 @@
+<app-spinner-global [visible]="cargando"></app-spinner-global>
+
+<div class="container mt-3">
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-9 col-xl-7">
+
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between align-items-center p-2 bg-dark rounded mb-0">
+
+                <h5 class="text-white m-0 text-center w-100">
+                    Reporte de Pedidos
+                </h5>
+
+                <button class="btn btn-light btn-sm" (click)="IrARuta('/menu')"
+                    style="width:30px;height:30px;border-radius:50%;">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+            <!-- CARD -->
+            <div class="card shadow-sm" style="margin-top:0;">
+                <div class="card-body pb-2 px-2">
+                    <div class="d-flex flex-wrap rounded bg-light border overflow-hidden">
+                        <!-- VENTAS -->
+                        <button class="btn flex-grow-1 py-2 px-3 position-relative" [ngClass]="{
+            'bg-white text-dark fw-semibold shadow-sm': rutaActual == '/reporte-venta',
+            'text-muted': rutaActual != '/reporte-venta'
+        }" (click)="IrARuta('/reporte-venta')">
+                            <span class="me-2">💰</span>
+                            <span>Ventas</span>
+                            <div *ngIf="rutaActual == '/reporte-venta'"
+                                class="position-absolute bottom-0 start-50 translate-middle-x"
+                                style="width: 30%; height: 3px; background-color: #4b5563; border-radius: 3px 3px 0 0;">
+                            </div>
+                        </button>
+
+                        <!-- PEDIDOS -->
+                        <button class="btn flex-grow-1 py-2 px-3 position-relative" [ngClass]="{
+            'bg-white text-dark fw-semibold shadow-sm': rutaActual == '/reporte-pedido',
+            'text-muted': rutaActual != '/reporte-pedido'
+        }" (click)="IrARuta('/reporte-pedido')">
+                            <span class="me-2">🧾</span>
+                            <span>Pedidos</span>
+                            <div *ngIf="rutaActual == '/reporte-pedido'"
+                                class="position-absolute bottom-0 start-50 translate-middle-x"
+                                style="width: 30%; height: 3px; background-color: #4b5563; border-radius: 3px 3px 0 0;">
+                            </div>
+                        </button>
+
+                        <!-- GANANCIAS -->
+                        <button class="btn flex-grow-1 py-2 px-3 position-relative" [ngClass]="{
+            'bg-white text-dark fw-semibold shadow-sm': rutaActual == '/reporte-ganancia',
+            'text-muted': rutaActual != '/reporte-ganancia'
+        }" (click)="IrARuta('/reporte-ganancia')">
+                            <span class="me-2">📈</span>
+                            <span>Ganancias</span>
+                            <div *ngIf="rutaActual == '/reporte-ganancia'"
+                                class="position-absolute bottom-0 start-50 translate-middle-x"
+                                style="width: 30%; height: 3px; background-color: #4b5563; border-radius: 3px 3px 0 0;">
+                            </div>
+                        </button>
+
+                        <!-- ANEXOS -->
+                        <!-- <button class="btn flex-grow-1 py-2 px-3 position-relative" [ngClass]="{
+            'bg-white text-dark fw-semibold shadow-sm': rutaActual == '/reporte-pedido-anexo',
+            'text-muted': rutaActual != '/reporte-pedido-anexo'
+        }" (click)="IrARuta('/reporte-pedido-anexo')">
+                            <span class="me-2">📁</span>
+                            <span>Anexos</span>
+                            <div *ngIf="rutaActual == '/reporte-pedido-anexo'"
+                                class="position-absolute bottom-0 start-50 translate-middle-x"
+                                style="width: 30%; height: 3px; background-color: #4b5563; border-radius: 3px 3px 0 0;">
+                            </div>
+                        </button> -->
+                    </div>
+                </div>
+                <hr class="mt-1 mb-2">
+
+                <div class="card-body pt-2">
+
+                    <!-- FILTROS -->
+                    <div class="card bg-light border-0 shadow-sm mb-3">
+
+                        <div class="card-body p-3">
+
+                            <h6 class="text-muted mb-2">
+                                📅 Filtros de búsqueda
+                            </h6>
+
+                            <div class="row align-items-end">
+
+                                <!-- FECHA INICIO -->
+                                <div class="col-5">
+
+                                    <label class="form-label fw-semibold small mb-1">
+                                        Inicio
+                                    </label>
+
+                                    <div class="position-relative">
+
+                                        <!-- INPUT BONITO -->
+                                        <input type="text" class="form-control form-control-sm border-dark pe-5"
+                                            [value]="FechaInicioFormateada" placeholder="dd/MM/yyyy" readonly
+                                            (click)="AbrirDatePicker('inicio')" style="cursor: pointer;">
+
+                                        <!-- ICONO DENTRO DEL INPUT -->
+                                        <span class="position-absolute top-50 end-0 translate-middle-y me-2"
+                                            style="cursor: pointer;" (click)="AbrirDatePicker('inicio')">
+                                            <i class="bi bi-calendar3"></i>
+                                        </span>
+
+                                        <!-- INPUT REAL -->
+                                        <input #dateInicio type="date"
+                                            class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                                            [(ngModel)]="FechaInicio" (change)="OnFechaInicioChange()">
+
+                                    </div>
+
+                                </div>
+
+                                <!-- FECHA FIN -->
+                                <div class="col-5">
+
+                                    <label class="form-label fw-semibold small mb-1">
+                                        Final
+                                    </label>
+
+                                    <div class="position-relative">
+
+                                        <!-- INPUT BONITO -->
+                                        <input type="text" class="form-control form-control-sm border-dark pe-5"
+                                            [value]="FechaFinFormateada" placeholder="dd/MM/yyyy" readonly
+                                            (click)="AbrirDatePicker('fin')" style="cursor: pointer;">
+
+                                        <!-- ICONO DENTRO -->
+                                        <span class="position-absolute top-50 end-0 translate-middle-y me-2"
+                                            style="cursor: pointer;" (click)="AbrirDatePicker('fin')">
+                                            <i class="bi bi-calendar3"></i>
+                                        </span>
+
+                                        <!-- INPUT REAL -->
+                                        <input #dateFin type="date"
+                                            class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                                            [(ngModel)]="FechaFin" (change)="OnFechaFinChange()">
+
+                                    </div>
+
+                                </div>
+
+                                <!-- BOTONES -->
+                                <div class="col-2 text-end">
+
+                                    <div class="btn-group w-100">
+
+                                        <button class="btn btn-dark btn-sm" (click)="Buscar()" title="Buscar">
+                                            🔎
+                                        </button>
+
+                                        <button class="btn btn-outline-dark btn-sm" (click)="Limpiar()" title="Limpiar">
+                                            ♻️
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- RESULTADO -->
+                    <div *ngIf="reporte">
+
+                        <h6 class="text-muted mb-3">
+                            📊 Resultado del reporte
+                        </h6>
+
+                        <div class="row">
+
+ <!-- VENTAS AL CRÉDITO -->
+<div class="col-6 mb-3">
+    <div class="card border-0 shadow-sm text-center h-100" style="background-color: #eef2ff;">
+        <div class="card-body p-2">
+            <small class="text-muted d-block mb-2">Ventas al crédito</small>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="fs-3">🛒</span>
+                <h5 class="fw-bold mb-0">{{ reporte.TotalPedidos }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MONTO DE PEDIDOS -->
+<div class="col-6 mb-3">
+    <div class="card border-0 shadow-sm text-center h-100" style="background-color: #fffbeb;">
+        <div class="card-body p-2">
+            <small class="text-muted d-block mb-2">Monto de pedidos</small>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="fs-3">💵</span>
+                <h5 class="fw-bold mb-0">Q {{ reporte.MontoPedidos | number:'1.2-2' }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ABONOS RECIBIDOS -->
+<div class="col-6 mb-3">
+    <div class="card border-0 shadow-sm text-center h-100" style="background-color: #eff8ff;">
+        <div class="card-body p-2">
+            <small class="text-muted d-block mb-2">Abonos recibidos</small>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="fs-3">🤝</span>
+                <h5 class="fw-bold mb-0">Q {{ reporte.TotalAbono | number:'1.2-2' }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SALDO PENDIENTE -->
+<div class="col-6 mb-3">
+    <div class="card border-0 shadow-sm text-center h-100" style="background-color: #fef2f2;">
+        <div class="card-body p-2">
+            <small class="text-muted d-block mb-2">Saldo pendiente</small>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="fs-3">⏳</span>
+                <h5 class="fw-bold mb-0">Q {{ reporte.SaldoPendiente | number:'1.2-2' }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- COSTO DE PEDIDOS -->
+<div class="col-6 mb-3">
+    <div class="card border-0 shadow-sm text-center h-100" style="background-color: #fef2f2;">
+        <div class="card-body p-2">
+            <small class="text-muted d-block mb-2">Inversión</small>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="fs-3">💸</span>
+                <h5 class="fw-bold mb-0" style="color: red;">
+                    Q {{ reporte.CostoPedidos | number:'1.2-2' }}
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GANANCIA -->
+<div class="col-6 mb-3">
+    <div class="card border-0 shadow-sm text-center h-100" style="background-color: #f0fdf4;">
+        <div class="card-body p-2">
+            <small class="text-muted d-block mb-2">Ganancias</small>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="fs-3">💰</span>
+                <h5 class="fw-bold mb-0" style="color: green;">
+                    Q {{ reporte.GananciaPedidos | number:'1.2-2' }}
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
