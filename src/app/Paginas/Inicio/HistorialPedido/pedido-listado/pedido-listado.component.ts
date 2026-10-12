@@ -18,6 +18,9 @@ import { ViewChild, ElementRef } from '@angular/core';
 export class PedidoListadoComponent implements OnInit {
   @ViewChild('dateInicio') dateInicio!: ElementRef;
   @ViewChild('dateFin') dateFin!: ElementRef;
+  ClaveEliminacion: string = '';
+  MostrarCampoClave: boolean = false;
+  PedidoAEliminar: any = null;
   FechaInicioFormateada: string = '';
   FechaFinFormateada: string = '';
   VerOtros: boolean = false;
@@ -160,8 +163,6 @@ export class PedidoListadoComponent implements OnInit {
 
   EliminarPedidoConfirmacion(Pedido: any) {
     if (!Pedido) return;
-
-    // Formatear el monto
     const montoFormateado = new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(Pedido.Total);
 
     this.AlertaServicio.Confirmacion(
@@ -170,46 +171,59 @@ export class PedidoListadoComponent implements OnInit {
       'Eliminar',
       'Cancelar'
     ).then((confirmado: boolean) => {
-      if (confirmado) {
-        // Mostrar spinner global
-        this.Procesando = true;
+      if (!confirmado) {
+        this.ReiniciarArrastre();
+        return;
+      }
 
-        this.HistorialPedidoServicio.EliminarPedido(Pedido.CodigoPedido).subscribe({
+      this.AlertaServicio.PedirClave(
+        'Clave de eliminación',
+        'Escriba la clave autorizada para continuar:',
+        'Confirmar Eliminación',
+        'Cancelar'
+      ).then((clave: string | null) => {
+        if (!clave) {
+          this.ReiniciarArrastre();
+          return;
+        }
+
+        this.Procesando = true;
+        this.HistorialPedidoServicio.EliminarPedido(Pedido.CodigoPedido, clave).subscribe({
           next: () => {
-            // Quitar pedido de la lista
             this.PedidosOriginal = this.PedidosOriginal.filter(p => p.CodigoPedido !== Pedido.CodigoPedido);
             this.FiltrarPedidos();
-
-            // Mostrar éxito
             this.AlertaServicio.MostrarExito('Pedido eliminado correctamente');
-
-            // Limpiar arrastre
-            if (this.ElementoFila) this.ElementoFila.style.transform = 'translateX(0)';
-            this.LimpiarArrastre();
-
-            // Ocultar spinner
+            this.ReiniciarArrastre();
             this.Procesando = false;
           },
-          error: (error) => {
-            console.error(error);
-            // Mostrar error
-            const mensaje = error?.message || 'Error al eliminar el pedido';
-            this.AlertaServicio.MostrarError(mensaje);
+          error: (respuesta) => {
+            console.log('Datos del error:', respuesta);
 
-            if (this.ElementoFila) this.ElementoFila.style.transform = 'translateX(0)';
-            this.LimpiarArrastre();
+            const tipo = respuesta?.error.tipo || 'Error';
+            const mensaje = respuesta?.error?.error?.message || respuesta?.message || 'Error al eliminar el pedido';
 
-            // Ocultar spinner
+            if (tipo === 'Alerta' || tipo === 'Advertencia') {
+              this.AlertaServicio.MostrarAlerta(mensaje, tipo);
+            } else {
+              this.AlertaServicio.MostrarError({ error: { message: mensaje } }, tipo);
+            }
+
+            this.ReiniciarArrastre();
             this.Procesando = false;
           }
         });
-      } else if (this.ElementoFila) {
-        // Cancelar confirmación
-        this.ElementoFila.style.transform = 'translateX(0)';
-        this.LimpiarArrastre();
-      }
+      });
     });
   }
+
+  private ReiniciarArrastre(): void {
+    if (this.ElementoFila) {
+      this.ElementoFila.style.transform = 'translateX(0)';
+    }
+    this.LimpiarArrastre();
+  }
+
+
 
   LimpiarArrastre() {
     this.ElementoFila = null;

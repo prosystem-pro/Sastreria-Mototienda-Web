@@ -9,6 +9,25 @@ export class AlertaServicio {
   constructor() {}
 
 
+PedirClave(titulo: string, texto: string = '', confirmText: string = 'Confirmar', cancelText: string = 'Cancelar'): Promise<string | null> {
+  return Swal.fire({
+    title: titulo,
+    text: texto,
+    input: 'password', 
+    inputPlaceholder: 'Escriba la clave aquí',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: confirmText,
+    cancelButtonText: cancelText,
+    inputValidator: (valor) => {
+      if (!valor) return 'Debe escribir la clave'; 
+      return null;
+    }
+  }).then(result => result.isConfirmed ? result.value : null);
+}
+
+
 
 MostrarExito(mensaje: string, titulo: string = 'Éxito'): void {
   Swal.fire({

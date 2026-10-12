@@ -164,38 +164,41 @@ export class VentaListadoComponent {
     window.addEventListener('touchend', soltar);
   }
   // ------------------- ELIMINAR VENTA -------------------
-  ConfirmarEliminar(CodigoPedido: number) {
+  ConfirmarEliminar(CodigoPedido: number, Venta?: any) {
 
-    this.Procesando = true;
+    this.AlertaServicio.PedirClave(
+      'Clave de eliminación',
+      'Escriba la clave autorizada para continuar:',
+      'Confirmar Eliminación',
+      'Cancelar'
+    ).then((clave: string | null) => {
+      if (!clave) return;
 
-    this.VentaServicio.EliminarVenta(CodigoPedido)
-      .subscribe({
-
+      this.Procesando = true;
+      this.VentaServicio.EliminarVenta(CodigoPedido, clave).subscribe({
         next: (resp) => {
-
-          this.AlertaServicio.MostrarExito(
-            'Venta eliminada',
-            resp.message || 'La venta fue eliminada correctamente'
-          );
-
+          this.AlertaServicio.MostrarExito('Venta eliminada', resp.message || 'La venta fue eliminada correctamente');
           this.CargarVentas();
-
-        },
-
-        error: (err) => {
-
           this.Procesando = false;
+        },
+        error: (respuesta) => {
+          this.Procesando = false;
+          const tipo = respuesta?.error?.tipo || 'Error';
+          const mensaje = respuesta?.error?.error?.message
+            || respuesta?.error?.message
+            || respuesta?.message
+            || 'No se pudo eliminar la venta';
 
-          this.AlertaServicio.MostrarError(
-            'Error',
-            err.error?.message || 'No se pudo eliminar la venta'
-          );
-
+          if (tipo === 'Alerta' || tipo === 'Advertencia') {
+            this.AlertaServicio.MostrarAlerta(mensaje, tipo);
+          } else {
+            this.AlertaServicio.MostrarError({ error: { message: mensaje } }, tipo);
+          }
         }
-
       });
-
+    });
   }
+
   // ------------------- CARGA -------------------
   CargarVentas() {
     this.Procesando = true;

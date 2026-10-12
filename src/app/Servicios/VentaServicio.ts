@@ -36,9 +36,13 @@ export class VentaServicio {
         );
     }
 
-    EliminarVenta(CodigoPedido: number): Observable<any> {
-        return this.http.delete(`${this.Url}/eliminar-venta/${CodigoPedido}`);
+    EliminarVenta(CodigoPedido: number, ClaveEliminacion: string): Observable<any> {
+        return this.http.post(
+            `${this.Url}/eliminar-venta/${CodigoPedido}`,
+            { ClaveEliminacion }
+        );
     }
+
 
     GenerarPDFVenta(CodigoPedido: number): Observable<Blob> {
         return this.http.get(
