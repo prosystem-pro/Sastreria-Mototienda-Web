@@ -679,4 +679,10 @@ export class VentaGestionComponent implements OnInit {
     window.addEventListener('touchend', soltar);
   }
 
+  CambiarPrecio(item: any, valor: number) {
+  const precio = Number(valor);
+  item.PrecioVenta = isNaN(precio) || precio < 0 ? 0 : precio;
+  item.Total = item.Cantidad * item.PrecioVenta;
+  this.CalcularTotales(this.Venta.Descuento || 0);
+}
 }

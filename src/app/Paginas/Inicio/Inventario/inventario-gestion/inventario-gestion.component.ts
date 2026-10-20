@@ -881,6 +881,23 @@ export class InventarioGestionComponent {
     this.Inventario.Producto = valor;
     event.target.value = valor;
   }
+
+NormalizarTextoYNumeros(event: any) {
+  let valor = event.target.value;
+  valor = valor
+    .trimStart()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9\s]/g, "")   // ✅ ÚNICO cambio: agregué 0-9
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (l: string) => l.toUpperCase());
+
+  this.Inventario.Producto = valor;
+  event.target.value = valor;
+}
+
+
   NormalizarPrecioInput(event: any) {
     let valor = event.target.value;
 
@@ -911,26 +928,26 @@ export class InventarioGestionComponent {
     this.Inventario.Precio = valor;
     event.target.value = valor;
   }
-NormalizarPrecioCostoInput(event: any) {
-  let valor = event.target.value;
-  
-  // Permitir solo números, coma y punto
-  valor = valor.replace(/[^0-9.,]/g, '');
-  
-  // Reemplazar coma por punto
-  valor = valor.replace(',', '.');
-  
-  // Evitar múltiples puntos y limitar a 2 decimales
-  const partes = valor.split('.');
-  if (partes.length > 1) {
-    valor = partes[0] + '.' + partes[1].slice(0, 2);
-  } else {
-    valor = partes[0];
-  }
+  NormalizarPrecioCostoInput(event: any) {
+    let valor = event.target.value;
 
-  this.Inventario.PrecioCosto = valor;
-  event.target.value = valor; // ✅ Reflejar en el input
-}
+    // Permitir solo números, coma y punto
+    valor = valor.replace(/[^0-9.,]/g, '');
+
+    // Reemplazar coma por punto
+    valor = valor.replace(',', '.');
+
+    // Evitar múltiples puntos y limitar a 2 decimales
+    const partes = valor.split('.');
+    if (partes.length > 1) {
+      valor = partes[0] + '.' + partes[1].slice(0, 2);
+    } else {
+      valor = partes[0];
+    }
+
+    this.Inventario.PrecioCosto = valor;
+    event.target.value = valor; // ✅ Reflejar en el input
+  }
 
 
   NormalizarStockInput(event: any) {
